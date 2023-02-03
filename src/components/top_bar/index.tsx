@@ -1,3 +1,4 @@
+import React, { useEffect } from "react"
 import {
     Box,
     Flex,
@@ -6,8 +7,19 @@ import {
 } from "@chakra-ui/react"
 import { GrMenu } from 'react-icons/gr'
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi'
+import { useDispatch, useSelector } from "react-redux"
+import montName from "../../utils/montName"
+import { rSetMonth, rSetYear, rSetShowBar } from './../../redux/action';
 
 const TopBar = () => {
+
+    const dispace = useDispatch()
+
+    const { month, monthNow, year, yearNow, isShowSideBar } = useSelector(
+        (state: any) => state.userReducer,
+    );
+
+    const tempisShowSideBar: boolean = isShowSideBar
 
     const center: FlexProps = {
         'alignItems': 'center',
@@ -15,7 +27,34 @@ const TopBar = () => {
         'marginRight': 10
     }
 
+    const nextMonthYear = () => {
+        if (month + 1 > 12) {
+            dispace(rSetMonth(1))
+            dispace(rSetYear(year + 1))
+        }
+        else {
+            dispace(rSetMonth(month + 1))
+        }
+    }
+    const prevMonthYear = () => {
+        if (month - 1 == 0) {
+            dispace(rSetMonth(12))
+            dispace(rSetYear(year - 1))
+        }
+        else {
+            dispace(rSetMonth(month - 1))
+        }
+    }
+    const nowMonthYear = () => {
+        dispace(rSetMonth(monthNow))
+        dispace(rSetYear(yearNow))
+    }
 
+    const changeDraw = () => {
+        dispace(rSetShowBar(!tempisShowSideBar))
+    }
+
+    useEffect(() => { }, [month, monthNow, year, yearNow])
 
     return (
         <Flex
@@ -43,7 +82,7 @@ const TopBar = () => {
                 }}
             >
                 <Box {...center} >
-                    <GrMenu size={24} />
+                    <GrMenu size={24} onClick={changeDraw} />
                 </Box>
                 <Box {...center} >
                     <Text>Awesome Calender</Text>
@@ -53,6 +92,7 @@ const TopBar = () => {
                     borderColor={'black'}
                     paddingX={5}
                     {...center}
+                    onClick={nowMonthYear}
                 >
                     Today
                 </Box>
@@ -70,14 +110,14 @@ const TopBar = () => {
                 }}
             >
                 <Box width={50} {...center}>
-                    <HiChevronLeft size={24} />
-                    <HiChevronRight size={24} />
+                    <HiChevronLeft size={24} onClick={prevMonthYear} />
+                    <HiChevronRight size={24} onClick={nextMonthYear} />
                 </Box>
                 <Box
                     alignItems={'center'}
                     display={'flex'}
                 >
-                    Januari 2023
+                    {`${montName[month - 1]} ${year}`}
                 </Box>
             </Flex>
         </Flex>

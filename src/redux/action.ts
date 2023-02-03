@@ -2,13 +2,14 @@ export const MONTH_NOW = 'MONTH_NOW'
 export const YEAR_NOW = 'YEAR_NOW'
 export const MONTH = 'MONTH'
 export const YEAR = 'YEAR'
+export const SHOW_SIDE_BAR = 'SHOW_SIDE_BAR'
 
 export const rSetMonthNow = (data : number) => ({
     type: MONTH_NOW,
     payload: data,
 })
 
-export const rSetYearNow = (data : string) => ({
+export const rSetYearNow = (data : number) => ({
     type: YEAR_NOW,
     payload: data,
 })
@@ -18,7 +19,12 @@ export const rSetMonth = (data : number) => ({
     payload: data,
 })
 
-export const rSetYear = (data : string) => ({
+export const rSetYear = (data : number) => ({
     type: YEAR,
+    payload: data,
+})
+
+export const rSetShowBar = (data : boolean) => ({
+    type: SHOW_SIDE_BAR,
     payload: data,
 })

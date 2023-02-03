@@ -3,13 +3,15 @@ import {
     YEAR_NOW,
     MONTH,
     YEAR,
+    SHOW_SIDE_BAR
 } from "./action";
 
 const initialState : object = {
     monthNow : 1,
     yearNow : '',
     month: 2,
-    year : '2023'
+    year : '2023',
+    isShowSideBar : true
 }
 
 function userReducer(state = initialState, action : any) {
@@ -22,6 +24,8 @@ function userReducer(state = initialState, action : any) {
             return { ...state, month: action.payload };
         case YEAR:
             return { ...state, year: action.payload };
+        case SHOW_SIDE_BAR:
+            return { ...state, isShowSideBar: action.payload };
         default:
             return state;
     }
