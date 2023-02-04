@@ -12,6 +12,7 @@ import indexDataNow from "../../utils/indexdayNow"
 import { useDispatch, useSelector } from "react-redux"
 import { rSetDayTouch, rSetMonthTouch, rSetYearTouch } from './../../redux/action'
 import moment from "moment"
+import colorBox from "../../utils/colorBox"
 
 const CalenderPage = () => {
 
@@ -22,12 +23,63 @@ const CalenderPage = () => {
         (state: any) => state.userReducer,
     );
 
+    const dayInMonth = moment(`${year}-${month}`, `YYYY-MM`).daysInMonth()
+    const startdayinMonth = moment(`${year}-${month}`, `YYYY-MM`).startOf('month').format('d')
+
     const dispace = useDispatch()
 
-    const changeTouchValue = (value: number, index: number) => {
+    const getDataDummie = (value: number, index: number) => {
+        let days = 0
+        let months = 0
+        let years = 0
+        let typeDete = 'this'
 
-        const dayInMonth = moment(`${year}-${month}`, `YYYY-MM`).daysInMonth()
-        const startdayinMonth = moment(`${year}-${month}`, `YYYY-MM`).startOf('month').format('d')
+        for (let i = 0; i < 7; i++) {
+            if (index < i && value > i) {
+                typeDete = 'prev'
+            }
+        }
+        if (index + 1 > parseInt(startdayinMonth) + dayInMonth) {
+            typeDete = 'next'
+        }
+        if (typeDete == 'this') {
+            years = year
+            months = month
+            days = value
+        }
+        else {
+            if (typeDete == 'prev') {
+                if (month - 1 < 1) {
+                    years = year - 1
+                    months = 12
+                }
+                else {
+                    years = year
+                    months = month - 1
+                }
+            }
+            if (typeDete == 'next') {
+                if (month + 1 > 12) {
+                    years = year + 1
+                    months = 1
+                }
+                else {
+                    years = year
+                    months = month + 1
+                }
+            }
+            days = value
+        }
+
+        let listFirst = localStorage.getItem(`${days}${months}${years}`)
+
+        let currentStorage: Calendar.Dummies.SidebarData[] = listFirst == null ? [] : JSON.parse(listFirst)
+
+        return currentStorage
+
+    }
+
+    const changeTouchValue = (value: number, index: number) => {
 
         let typeDete = 'this'
         let isThisMonth = true
@@ -73,7 +125,6 @@ const CalenderPage = () => {
             }
             dispace(rSetDayTouch(value))
         }
-        // console.log(typeDete)
     }
 
     useEffect(() => {
@@ -132,6 +183,35 @@ const CalenderPage = () => {
 
                                     }
                                 </Box>
+                                {
+                                    getDataDummie(placement, index).map((data: Calendar.Dummies.SidebarData, index: number) => (
+                                        index < 2 ?
+                                            <Box
+                                                paddingX={3}
+                                                paddingY={1}
+                                                backgroundColor={colorBox[index]}
+                                                width={'100%'}
+                                                justifyContent={'center'}
+                                                alignItems={'center'}
+                                                display={'flex'}
+                                                borderRadius={10}
+                                                key={index}
+                                            >
+                                                <Text
+                                                    noOfLines={1}
+                                                    color={'white'}
+                                                >
+                                                    {data.name}
+                                                </Text>
+                                            </Box>
+                                            : null
+                                    ))
+                                }
+                                {
+                                    getDataDummie(placement, index).length > 2
+                                        ? <Text>{`${getDataDummie(placement, index).length - 2} More`}</Text>
+                                        : <Box />
+                                }
                             </Flex>
                         </GridItem>
                     ))
