@@ -21,22 +21,24 @@ import colorBox from "../../utils/colorBox"
 import { useDispatch, useSelector } from "react-redux"
 import montName from "../../utils/montName"
 import moment from "moment"
+import { rTriger } from "../../redux/action"
 
 const SideBar = () => {
+
+    const dispatch = useDispatch()
 
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     const [openEditDoubleTouch, setOpenEdit] = useState<boolean>(false)
     const [indexEditDoubleTouch, setOpenIndex] = useState<number>(0)
 
-    const { monthNow, monthTouch, yearTouch, dayTouch, isShowSideBar } = useSelector(
+    const { monthNow, monthTouch, yearTouch, dayTouch, isShowSideBar, triger } = useSelector(
         (state: any) => state.userReducer,
     );
 
     const [isPress, setPress] = useState<boolean>(false)
     const [dataDummie, setDummie] = useState<Calendar.Dummies.SidebarData[]>([])
     const [text, setText] = useState<string>('New Calendar')
-    const [triger, setTriger] = useState<number>(0)
     const handleChange = (event: any) => setText(event.target.value)
 
 
@@ -69,8 +71,7 @@ const SideBar = () => {
 
         console.log(dataStorage)
 
-        let getTriger = triger + 1
-        setTriger(getTriger)
+        dispatch(rTriger(!triger))
     }
 
     const setListFirst = () => {
@@ -85,24 +86,20 @@ const SideBar = () => {
         dataDummie[index].status = !dataDummie[index].status
         localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
 
-        let getTriger = triger + 1
-        setTriger(getTriger)
+        dispatch(rTriger(!triger))
     }
 
     const onChangeName = () => {
         dataDummie[indexEditDoubleTouch].name = text
         localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
 
-        let getTriger = triger + 1
-        setTriger(getTriger)
+        dispatch(rTriger(!triger))
         setOpenEdit(false)
     }
     const removeDataList = () => {
         dataDummie.splice(indexEditDoubleTouch, 1)
         localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
-
-        let getTriger = triger + 1
-        setTriger(getTriger)
+        dispatch(rTriger(!triger))
     }
 
     useEffect(() => {

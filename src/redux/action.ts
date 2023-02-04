@@ -6,6 +6,7 @@ export const MONTH_TOUCH = 'MONTH_TOUCH'
 export const YEAR_TOUCH = 'YEAR_TOUCH'
 export const DAY_TOUCH = 'DAY_TOUCH'
 export const SHOW_SIDE_BAR = 'SHOW_SIDE_BAR'
+export const TRIGER = 'TRIGER'
 
 export const rSetMonthNow = (data : number) => ({
     type: MONTH_NOW,
@@ -44,5 +45,9 @@ export const rSetDayTouch = (data : number) => ({
 
 export const rSetShowBar = (data : boolean) => ({
     type: SHOW_SIDE_BAR,
+    payload: data,
+})
+export const rTriger = (data : boolean) => ({
+    type: TRIGER,
     payload: data,
 })

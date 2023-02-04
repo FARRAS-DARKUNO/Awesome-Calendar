@@ -6,7 +6,8 @@ import {
     YEAR_TOUCH,
     MONTH_TOUCH,
     DAY_TOUCH,
-    SHOW_SIDE_BAR
+    SHOW_SIDE_BAR,
+    TRIGER
 } from "./action";
 
 const initialState : object = {
@@ -17,7 +18,8 @@ const initialState : object = {
     monthTouch: 1,
     yearTouch : 1,
     dayTouch : 1,
-    isShowSideBar : true
+    isShowSideBar : true,
+    triger : true
 }
 
 function userReducer(state = initialState, action : any) {
@@ -38,6 +40,8 @@ function userReducer(state = initialState, action : any) {
             return { ...state, dayTouch: action.payload };
         case SHOW_SIDE_BAR:
             return { ...state, isShowSideBar: action.payload };
+        case TRIGER:
+            return { ...state, triger: action.payload };
         default:
             return state;
     }
