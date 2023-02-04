@@ -1,89 +1,218 @@
 import React, { useState, useEffect } from "react"
 import {
     Box,
+    Button,
     Flex,
-    Text
+    Input,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+    useDisclosure
 } from "@chakra-ui/react"
 import { HiOutlinePlus } from 'react-icons/hi'
 import { RiArrowUpSLine, RiArrowDownSLine, RiCheckboxFill } from 'react-icons/ri'
+import { FiTrash2 } from 'react-icons/fi'
 import colorBox from "../../utils/colorBox"
+import { useDispatch, useSelector } from "react-redux"
+import montName from "../../utils/montName"
+import moment from "moment"
 
 const SideBar = () => {
 
-    const dummie = [
-        {
-            name: "Hallo nama saya",
-            status: true,
-        },
-        {
-            name: "Abdurrachman Farras",
-            status: true,
-        },
-        {
-            name: "Mantaps Mantas Hahahaha",
-            status: false
-        }
-    ]
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
+    const [openEditDoubleTouch, setOpenEdit] = useState<boolean>(false)
+    const [indexEditDoubleTouch, setOpenIndex] = useState<number>(0)
+
+    const { monthNow, monthTouch, yearTouch, dayTouch, isShowSideBar } = useSelector(
+        (state: any) => state.userReducer,
+    );
+
     const [isPress, setPress] = useState<boolean>(false)
-    const [dataDummie, setDummie] = useState<Calendar.Dummies.SidebarData[]>(dummie)
+    const [dataDummie, setDummie] = useState<Calendar.Dummies.SidebarData[]>([])
+    const [text, setText] = useState<string>('New Calendar')
+    const [triger, setTriger] = useState<number>(0)
+    const handleChange = (event: any) => setText(event.target.value)
+
 
     const chengeRow = () => setPress(!isPress)
 
+    const saveList = () => {
+        let dataSent = {
+            name: text,
+            status: false
+        }
 
+        let dataStorage = localStorage.getItem(`${dayTouch}${monthTouch}${yearTouch}`)
+
+        if (dataStorage == null) {
+            localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify([dataSent]))
+        }
+        else {
+            let currentStorage: (typeof dataSent)[];
+
+            try {
+                currentStorage = JSON.parse(dataStorage)
+            } catch {
+                currentStorage = [];
+            }
+            currentStorage.push(dataSent)
+            localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(currentStorage))
+        }
+
+        dataStorage = localStorage.getItem(`${dayTouch}${monthTouch}${yearTouch}`)
+
+        console.log(dataStorage)
+
+        let getTriger = triger + 1
+        setTriger(getTriger)
+    }
+
+    const setListFirst = () => {
+        let listFirst = localStorage.getItem(`${dayTouch}${monthTouch}${yearTouch}`)
+
+        let currentStorage = listFirst == null ? [] : JSON.parse(listFirst)
+
+        setDummie(currentStorage)
+    }
+
+    const onChnageBox = (index: number) => {
+        dataDummie[index].status = !dataDummie[index].status
+        localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
+
+        let getTriger = triger + 1
+        setTriger(getTriger)
+    }
+
+    const onChangeName = () => {
+        dataDummie[indexEditDoubleTouch].name = text
+        localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
+
+        let getTriger = triger + 1
+        setTriger(getTriger)
+        setOpenEdit(false)
+    }
+    const removeDataList = () => {
+        dataDummie.splice(indexEditDoubleTouch, 1)
+        localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
+
+        let getTriger = triger + 1
+        setTriger(getTriger)
+    }
+
+    useEffect(() => {
+        setListFirst()
+    }, [dayTouch, monthTouch, yearTouch, triger])
 
     return (
-        <Flex
-            height={{
-                base: '100vh',
-                xl: 'calc(100vh - 90px)',
-            }}
-            background={'white'}
-            width={{
-                base: '44vw',
-                md: '25vw',
-                xl: '14vw'
-            }}
-            borderWidth={1}
-            borderRightColor={'black'}
-            padding={5}
-            alignItems={'start'}
-            flexDirection={'column'}
-        >
-            <Flex alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
-                <Text>My Calender</Text>
-                <HiOutlinePlus size={16} />
+        <>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>{`${moment(`${yearTouch}-${monthNow}-${dayTouch}`, `YYYY-MM-DD`).format('dddd')}, ${montName[monthTouch - 1]} ${dayTouch}`}</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Input
+                            placeholder='New Calendar'
+                            value={text}
+                            onChange={handleChange}
+                        />
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={saveList} cursor={'pointer'}>
+                            Save
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            <Modal isOpen={openEditDoubleTouch} onClose={() => setOpenEdit(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>{`${moment(`${yearTouch}-${monthNow}-${dayTouch}`, `YYYY-MM-DD`).format('dddd')}, ${montName[monthTouch - 1]} ${dayTouch}`}</ModalHeader>
+                    <ModalCloseButton ><FiTrash2 size={24} onClick={removeDataList} /></ModalCloseButton>
+
+                    <ModalBody>
+                        <Input
+                            placeholder='New Calendar'
+                            value={text}
+                            onChange={handleChange}
+                        />
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={onChangeName} cursor={'pointer'}>
+                            Change
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            <Flex
+                height={{
+                    base: '100vh',
+                    xl: 'calc(100vh - 90px)',
+                }}
+                background={'white'}
+                width={{
+                    base: '30vw',
+                    md: '25vw',
+                    xl: '14vw'
+                }}
+                display={!isShowSideBar ? 'none' : 'block'}
+                borderWidth={1}
+                borderRightColor={'black'}
+                padding={5}
+                alignItems={'start'}
+                flexDirection={'column'}
+            >
+                <Flex alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
+                    <Text>My Calender</Text>
+                    <HiOutlinePlus size={16} onClick={onOpen} cursor={'pointer'} />
+                    {
+                        isPress
+                            ? <RiArrowUpSLine size={24} onClick={chengeRow} cursor={'pointer'} />
+                            : <RiArrowDownSLine size={24} onClick={chengeRow} cursor={'pointer'} />
+                    }
+                </Flex>
                 {
                     isPress
-                        ? <RiArrowUpSLine size={24} onClick={chengeRow} />
-                        : <RiArrowDownSLine size={24} onClick={chengeRow} />
+                        ? dataDummie.map((placement: any, index: number) => (
+                            <Flex marginTop={2} alignItems={'center'} key={Math.random().toString()}>
+                                {
+                                    placement.status
+                                        ? <RiCheckboxFill color={colorBox[index]} size={26} onClick={() => onChnageBox(index)} />
+                                        : <Box
+                                            height={5}
+                                            width={5}
+                                            borderWidth={1}
+                                            borderColor={colorBox[index]}
+                                            marginRight={2}
+                                            onClick={() => onChnageBox(index)}
+                                        />
+                                }
+                                <Text fontSize={12}
+                                    onDoubleClick={() => {
+                                        setOpenIndex(index)
+                                        setOpenEdit(true)
+                                    }}
+                                    cursor={'pointer'}
+                                >
+                                    {placement.name}
+                                </Text>
+                            </Flex>
+                        ))
+                        : null
                 }
+
             </Flex>
-            {
-                isPress
-                    ? dummie.map((placement: any, index: number) => (
-                        <Flex marginTop={2} alignItems={'center'} key={Math.random().toString()}>
-                            {
-                                placement.status
-                                    ? <RiCheckboxFill color={colorBox[index]} size={26} />
-                                    : <Box
-                                        height={5}
-                                        width={5}
-                                        borderWidth={1}
-                                        borderColor={colorBox[index]}
-                                        marginRight={2}
-                                    />
-                            }
-
-
-                            <Text fontSize={12}>
-                                {placement.name}
-                            </Text>
-                        </Flex>
-                    ))
-                    : null
-            }
-
-        </Flex>
+        </>
     )
 }
 

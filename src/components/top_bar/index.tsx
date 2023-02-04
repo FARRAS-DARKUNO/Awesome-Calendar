@@ -81,8 +81,8 @@ const TopBar = () => {
                     md: 'normal',
                 }}
             >
-                <Box {...center} >
-                    <GrMenu size={24} onClick={changeDraw} />
+                <Box {...center} cursor={'pointer'} onClick={changeDraw}>
+                    <GrMenu size={24} />
                 </Box>
                 <Box {...center} >
                     <Text>Awesome Calender</Text>
@@ -93,6 +93,7 @@ const TopBar = () => {
                     paddingX={5}
                     {...center}
                     onClick={nowMonthYear}
+                    cursor={'pointer'}
                 >
                     Today
                 </Box>
@@ -110,8 +111,8 @@ const TopBar = () => {
                 }}
             >
                 <Box width={50} {...center}>
-                    <HiChevronLeft size={24} onClick={prevMonthYear} />
-                    <HiChevronRight size={24} onClick={nextMonthYear} />
+                    <HiChevronLeft size={24} onClick={prevMonthYear} cursor={'pointer'} />
+                    <HiChevronRight size={24} onClick={nextMonthYear} cursor={'pointer'} />
                 </Box>
                 <Box
                     alignItems={'center'}
