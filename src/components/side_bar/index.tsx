@@ -11,6 +11,7 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Select,
     Text,
     useDisclosure
 } from "@chakra-ui/react"
@@ -22,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux"
 import montName from "../../utils/montName"
 import moment from "moment"
 import { rTriger } from "../../redux/action"
+import nameOfDate from "../../utils/nameInDate"
 
 const SideBar = () => {
 
@@ -38,16 +40,23 @@ const SideBar = () => {
 
     const [isPress, setPress] = useState<boolean>(false)
     const [dataDummie, setDummie] = useState<Calendar.Dummies.SidebarData[]>([])
-    const [text, setText] = useState<string>('New Calendar')
-    const handleChange = (event: any) => setText(event.target.value)
 
+    const [text, setText] = useState<string>('')
+    const [nameUser, setNameUser] = useState<string>('')
+    const [description, setDescription] = useState<string>('')
+
+    const handleChangeText = (event: any) => setText(event.target.value)
+    const handleChangeName = (event: any) => setNameUser(event.target.value)
+    const handleChangeDescription = (event: any) => setDescription(event.target.value)
 
     const chengeRow = () => setPress(!isPress)
 
     const saveList = () => {
         let dataSent = {
-            name: text,
-            status: false
+            name: text == '' ? 'New Calender' : text,
+            user: nameUser == '' ? 'New Calender' : nameUser,
+            description: description,
+            status: true,
         }
 
         let dataStorage = localStorage.getItem(`${dayTouch}${monthTouch}${yearTouch}`)
@@ -67,10 +76,13 @@ const SideBar = () => {
             localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(currentStorage))
         }
 
-        dataStorage = localStorage.getItem(`${dayTouch}${monthTouch}${yearTouch}`)
+        // dataStorage = localStorage.getItem(`${dayTouch}${monthTouch}${yearTouch}`)
 
-        console.log(dataStorage)
+        // console.log(dataStorage)
 
+        setText('')
+        setNameUser('')
+        setDescription('')
         dispatch(rTriger(!triger))
     }
 
@@ -111,13 +123,26 @@ const SideBar = () => {
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>{`${moment(`${yearTouch}-${monthNow}-${dayTouch}`, `YYYY-MM-DD`).format('dddd')}, ${montName[monthTouch - 1]} ${dayTouch}`}</ModalHeader>
+                    <ModalHeader>{`${moment(`${yearTouch}-${monthTouch}-${dayTouch}`, `YYYY-MM-DD`).format('dddd')}, ${montName[monthTouch - 1]} ${dayTouch}`}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
+
                         <Input
-                            placeholder='New Calendar'
+                            placeholder='Add title'
                             value={text}
-                            onChange={handleChange}
+                            onChange={handleChangeText}
+                        />
+                        <Select placeholder='Select option' onChange={handleChangeName}>
+                            {
+                                nameOfDate.map((name: string, index: number) => (
+                                    <option value={name}>{name}</option>
+                                ))
+                            }
+                        </Select>
+                        <Input
+                            placeholder='Add description'
+                            value={description}
+                            onChange={handleChangeDescription}
                         />
                     </ModalBody>
 
@@ -129,27 +154,6 @@ const SideBar = () => {
                 </ModalContent>
             </Modal>
 
-            <Modal isOpen={openEditDoubleTouch} onClose={() => setOpenEdit(false)}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>{`${moment(`${yearTouch}-${monthNow}-${dayTouch}`, `YYYY-MM-DD`).format('dddd')}, ${montName[monthTouch - 1]} ${dayTouch}`}</ModalHeader>
-                    <ModalCloseButton ><FiTrash2 size={24} onClick={removeDataList} /></ModalCloseButton>
-
-                    <ModalBody>
-                        <Input
-                            placeholder='New Calendar'
-                            value={text}
-                            onChange={handleChange}
-                        />
-                    </ModalBody>
-
-                    <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={onChangeName} cursor={'pointer'}>
-                            Change
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
 
             <Flex
                 height={{
@@ -169,18 +173,29 @@ const SideBar = () => {
                 alignItems={'start'}
                 flexDirection={'column'}
             >
-                <Flex alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
+                <Flex alignItems={'center'} justifyContent={'space-between'} width={'100%'}
+                    flexDirection={{
+                        base: 'column',
+                        xl: 'row'
+                    }}
+                >
                     <Text>My Calender</Text>
-                    <HiOutlinePlus size={16} onClick={onOpen} cursor={'pointer'} />
-                    {
-                        isPress
-                            ? <RiArrowUpSLine size={24} onClick={chengeRow} cursor={'pointer'} />
-                            : <RiArrowDownSLine size={24} onClick={chengeRow} cursor={'pointer'} />
-                    }
+                    <Flex
+                        justifyContent={{
+                            base: 'space-between',
+                            lg: 'none'
+                        }}>
+                        <HiOutlinePlus size={16} onClick={onOpen} cursor={'pointer'} />
+                        {
+                            isPress
+                                ? <RiArrowUpSLine size={24} onClick={chengeRow} cursor={'pointer'} />
+                                : <RiArrowDownSLine size={24} onClick={chengeRow} cursor={'pointer'} />
+                        }
+                    </Flex>
                 </Flex>
                 {
                     isPress
-                        ? dataDummie.map((placement: any, index: number) => (
+                        ? dataDummie.map((placement: Calendar.Dummies.SidebarData, index: number) => (
                             <Flex marginTop={2} alignItems={'center'} key={Math.random().toString()}>
                                 {
                                     placement.status
@@ -195,13 +210,9 @@ const SideBar = () => {
                                         />
                                 }
                                 <Text fontSize={12}
-                                    onDoubleClick={() => {
-                                        setOpenIndex(index)
-                                        setOpenEdit(true)
-                                    }}
                                     cursor={'pointer'}
                                 >
-                                    {placement.name}
+                                    {placement.user}
                                 </Text>
                             </Flex>
                         ))

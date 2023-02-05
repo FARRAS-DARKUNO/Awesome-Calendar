@@ -24,7 +24,7 @@ const TopBar = () => {
     const center: FlexProps = {
         'alignItems': 'center',
         'display': 'flex',
-        'marginRight': 10
+        'marginRight': 5
     }
 
     const nextMonthYear = () => {
@@ -85,17 +85,18 @@ const TopBar = () => {
                     <GrMenu size={24} />
                 </Box>
                 <Box {...center} >
-                    <Text>Awesome Calender</Text>
+                    <Text fontWeight={'bold'} fontSize={24}>Awesome Calender</Text>
                 </Box>
                 <Box
                     borderWidth={2}
                     borderColor={'black'}
-                    paddingX={5}
+                    paddingX={4}
+
                     {...center}
                     onClick={nowMonthYear}
                     cursor={'pointer'}
                 >
-                    Today
+                    <Text fontSize={12} fontWeight={'bold'} > Today </Text>
                 </Box>
             </Flex>
             <Flex
