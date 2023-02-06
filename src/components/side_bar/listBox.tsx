@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import {
     Input,
     Text,
@@ -9,8 +9,6 @@ import { GrTrash } from 'react-icons/gr'
 
 const ListBox = ({ placement, dataDummie, index }: Props) => {
     const dispatch = useDispatch()
-
-    const [refresher, setRefresher] = useState(false)
 
     const [isClick, setClick] = useState<boolean>(false)
     const [text, setText] = useState<string>('')
@@ -24,15 +22,12 @@ const ListBox = ({ placement, dataDummie, index }: Props) => {
 
         dataDummie[index].user = text
         localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
-
-        setRefresher(prev => !prev)
         setClick(false)
     }
 
     const removeDataList = () => {
         dataDummie.splice(index, 1)
         localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
-        setRefresher(prev => !prev)
         dispatch(rTriger(!triger))
     }
 

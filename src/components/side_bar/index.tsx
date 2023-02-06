@@ -31,10 +31,7 @@ const SideBar = () => {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
 
-    const [openEditDoubleTouch, setOpenEdit] = useState<boolean>(false)
-    const [indexEditDoubleTouch, setOpenIndex] = useState<number>(0)
-
-    const { monthNow, monthTouch, yearTouch, dayTouch, isShowSideBar, triger } = useSelector(
+    const { monthTouch, yearTouch, dayTouch, isShowSideBar, triger } = useSelector(
         (state: any) => state.userReducer,
     );
 
@@ -76,14 +73,11 @@ const SideBar = () => {
             localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(currentStorage))
         }
 
-        // dataStorage = localStorage.getItem(`${dayTouch}${monthTouch}${yearTouch}`)
-
-        // console.log(dataStorage)
-
         setText('')
         setNameUser('')
         setDescription('')
         dispatch(rTriger(!triger))
+        onClose()
     }
 
     const setListFirst = () => {
@@ -98,19 +92,6 @@ const SideBar = () => {
         dataDummie[index].status = !dataDummie[index].status
         localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
 
-        dispatch(rTriger(!triger))
-    }
-
-    const onChangeName = () => {
-        dataDummie[indexEditDoubleTouch].name = text
-        localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
-
-        dispatch(rTriger(!triger))
-        setOpenEdit(false)
-    }
-    const removeDataList = () => {
-        dataDummie.splice(indexEditDoubleTouch, 1)
-        localStorage.setItem(`${dayTouch}${monthTouch}${yearTouch}`, JSON.stringify(dataDummie))
         dispatch(rTriger(!triger))
     }
 
@@ -196,7 +177,6 @@ const SideBar = () => {
                 {
                     isPress
                         ? dataDummie.map((placement: Calendar.Dummies.SidebarData, index: number) => {
-                            let isClick = false
 
                             return <Flex marginTop={2} alignItems={'center'} key={Math.random().toString()}>
                                 {

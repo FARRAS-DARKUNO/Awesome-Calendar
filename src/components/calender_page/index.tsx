@@ -5,7 +5,6 @@ import {
     Flex,
     Grid,
     GridItem,
-    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -154,7 +153,7 @@ const CalenderPage = () => {
     useEffect(() => {
         setDete(getDataCalender(month, year))
         setDateNow(indexDataNow())
-    }, [month, year, monthTouch, yearTouch, dayTouch])
+    }, [month, year, monthTouch, yearTouch, dayTouch, triger])
 
 
     return (
@@ -215,8 +214,9 @@ const CalenderPage = () => {
                                     alignItems={'center'}
                                     padding={5}
                                     flexDirection={'column'}
+                                    onClick={() => changeTouchValue(placement, index)} cursor={'pointer'}
                                 >
-                                    <Box alignItems={'center'} display={'flex'} flexDirection={'column'} onClick={() => changeTouchValue(placement, index)} cursor={'pointer'}>
+                                    <Box alignItems={'center'} display={'flex'} flexDirection={'column'} >
                                         {
                                             index <= 6 ? <Text>{dayName[index]}</Text> : null
                                         }
