@@ -17,13 +17,13 @@ import {
 } from "@chakra-ui/react"
 import { HiOutlinePlus } from 'react-icons/hi'
 import { RiArrowUpSLine, RiArrowDownSLine, RiCheckboxFill } from 'react-icons/ri'
-import { FiTrash2 } from 'react-icons/fi'
 import colorBox from "../../utils/colorBox"
 import { useDispatch, useSelector } from "react-redux"
 import montName from "../../utils/montName"
 import moment from "moment"
 import { rTriger } from "../../redux/action"
 import nameOfDate from "../../utils/nameInDate"
+import ListBox from "./listBox"
 
 const SideBar = () => {
 
@@ -195,8 +195,10 @@ const SideBar = () => {
                 </Flex>
                 {
                     isPress
-                        ? dataDummie.map((placement: Calendar.Dummies.SidebarData, index: number) => (
-                            <Flex marginTop={2} alignItems={'center'} key={Math.random().toString()}>
+                        ? dataDummie.map((placement: Calendar.Dummies.SidebarData, index: number) => {
+                            let isClick = false
+
+                            return <Flex marginTop={2} alignItems={'center'} key={Math.random().toString()}>
                                 {
                                     placement.status
                                         ? <RiCheckboxFill color={colorBox[index]} size={26} onClick={() => onChnageBox(index)} />
@@ -209,13 +211,10 @@ const SideBar = () => {
                                             onClick={() => onChnageBox(index)}
                                         />
                                 }
-                                <Text fontSize={12}
-                                    cursor={'pointer'}
-                                >
-                                    {placement.user}
-                                </Text>
+                                <ListBox placement={placement} dataDummie={dataDummie} index={index} />
+
                             </Flex>
-                        ))
+                        })
                         : null
                 }
 
